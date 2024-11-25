@@ -3,7 +3,7 @@ import { basketOutline } from 'ionicons/icons';
 import ExploreContainer from '../components/ExploreContainer';
 import './Home.css';
 
-const Home: React.FC = () => {
+const MainPage: React.FC = () => {
   
   return (
     <IonPage>
@@ -16,11 +16,11 @@ const Home: React.FC = () => {
         <div className="home-content">
           <h1><strong>Welcome to Shopventory!</strong></h1>
           <IonIcon icon={basketOutline} className="large-icon"  />
-          <h6><strong>Effortless shopping list and inventory management in one app</strong></h6>
+          <h6><strong>What do you want to do?</strong></h6>
           
           <div className='button-container'>
-            <IonButton expand="block" routerLink='/login' color={'success'}>Login</IonButton>
-            <IonButton expand="block" routerLink='/register' color={'success'}>Register</IonButton>
+            <IonButton expand="block"  color={'success'}>Create List</IonButton>
+            <IonButton expand="block"  color={'success'}>View List</IonButton>
           </div>
         </div>
 
@@ -30,4 +30,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default MainPage;
