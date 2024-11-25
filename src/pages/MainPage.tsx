@@ -23,6 +23,7 @@ const MainPage: React.FC = () => {
             <IonButton expand="block" routerLink='/ViewInvListPage' color={'success'}>View Inventory List</IonButton>
             <IonButton expand="block" routerLink='/ViewShopListPage' color={'success'}>View Shopping List</IonButton>
             <IonButton expand="block" routerLink='/NewItemPage' color={'success'}>Create New Item</IonButton>
+            <IonButton expand="block" routerLink='/' color={'danger'}>Log out</IonButton>
           </div>
         </div>
 

@@ -39,7 +39,7 @@ import MainPage from './pages/MainPage';
 import NewListPage from './pages/NewListPage';
 import ViewInvListPage from './pages/ViewInvListPage';
 import NewItemPage from './pages/NewItemPage';
-import ViewShopListPage from './pages/ViewInvListPage';
+import ViewShopListPage from './pages/ViewShopListPage';
 
 
 setupIonicReact();
