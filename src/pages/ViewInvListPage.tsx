@@ -1,5 +1,5 @@
 import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon } from '@ionic/react';
-import { basketOutline } from 'ionicons/icons';
+import { arrowBackCircle, basketOutline } from 'ionicons/icons';
 import { logoDropbox } from 'ionicons/icons';
 import ExploreContainer from '../components/ExploreContainer';
 import './Home.css';
@@ -9,8 +9,24 @@ const ViewInvListPage: React.FC = () => {
   return (
     <IonPage>
       <IonHeader>
-        <IonToolbar color={'success'}>
-          <IonTitle> <IonIcon icon={basketOutline}  size='large'/>Shopventory </IonTitle>
+      <IonToolbar color={'success'}>
+          <IonButton slot='start' fill='clear' style={{ width: 'auto' , height:'auto' }}>
+            <IonIcon
+              icon={basketOutline}
+              color='dark'
+              size='large'/>
+          </IonButton>
+          <IonTitle className="ion-text-center">
+            SHOPVENTORY
+          </IonTitle>
+            <IonButton 
+              routerLink="/MainPage" fill="clear" slot='end' style={{ width: 'auto' , height:'auto' }}>
+              <IonIcon
+              color='dark'
+              size='large'
+              icon={arrowBackCircle} 
+              />
+            </IonButton>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-text-center" fullscreen>
@@ -19,10 +35,7 @@ const ViewInvListPage: React.FC = () => {
           <IonIcon icon={logoDropbox} className="large-icon"  />
           
           
-          <div className='button-container'>
-            <IonButton expand="block" routerLink='/MainPage' color={'success'}>Return</IonButton>
 
-          </div>
         </div>
 
         <ExploreContainer />
