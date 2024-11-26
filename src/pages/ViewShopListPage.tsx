@@ -1,6 +1,5 @@
 import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon, IonSearchbar, IonList, IonItem, IonLabel } from '@ionic/react';
-import { arrowBackCircle, basketOutline, cart, construct, fastFood, gameController, gift, shirt } from 'ionicons/icons';
-import { cartOutline} from 'ionicons/icons';
+import { arrowBackCircle, basketOutline, cart, gameController, gift } from 'ionicons/icons';
 import ExploreContainer from '../components/ExploreContainer';
 import './Home.css';
 

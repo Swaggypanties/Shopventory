@@ -1,6 +1,5 @@
-import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon, IonRadioGroup, IonRadio, IonInput, IonList, IonItem, IonSelect, IonText, IonSelectOption } from '@ionic/react';
-import { arrowBackCircle, basketOutline, construct, shirt } from 'ionicons/icons';
-import { listOutline } from 'ionicons/icons';
+import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon, IonRadioGroup, IonRadio, IonInput, IonList, IonItem, IonSelect, IonSelectOption } from '@ionic/react';
+import { arrowBackCircle, basketOutline, shirt } from 'ionicons/icons';
 import ExploreContainer from '../components/ExploreContainer';
 import './Home.css';
 
