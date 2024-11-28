@@ -96,12 +96,11 @@ const ShopListDetailsPage: React.FC = () => {
             value={newItemName}
             onIonChange={(e) => setNewItemName(e.detail.value!)}
           />
-          <IonInput
+          <IonInput className='quantity-input'
             type="number"
             placeholder="Quantity"
             value={newItemQuantity}
             onIonChange={(e) => setNewItemQuantity(parseInt(e.detail.value!, 10))}
-            style={{ maxWidth: '70px', textAlign: 'center' }}
           />
           <IonButton onClick={addItem} color="success">
             Add Item
