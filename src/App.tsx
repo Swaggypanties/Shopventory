@@ -2,6 +2,7 @@ import { Redirect, Route, } from 'react-router-dom';
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import Home from './pages/Home';
+import ListDetailsPage from './pages/ListDetailsPage';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -40,6 +41,8 @@ import NewListPage from './pages/NewListPage';
 import ViewInvListPage from './pages/ViewInvListPage';
 import NewItemPage from './pages/NewItemPage';
 import ViewShopListPage from './pages/ViewShopListPage';
+import ShopListDetailsPage from './pages/ShopListDetailsPage';
+import InvListDetailsPage from './pages/InvListDetailsPage';
 
 
 setupIonicReact();
@@ -57,7 +60,11 @@ const App: React.FC = () => (
         <Route path="/NewItemPage" component={NewItemPage} exact/>
         <Route path="/ViewInvListPage" component={ViewInvListPage} exact/>
         <Route path="/ViewShopListPage" component={ViewShopListPage} exact/>
-        
+        <Route path="/list/:listId" component={ShopListDetailsPage} />
+        <Route path="/viewshoplist" component={ViewShopListPage} />
+        <Route path="/newlist" component={NewListPage} />
+        <Route path="/invlist/:listId" component={InvListDetailsPage} />
+
 
         </Route>
       </IonRouterOutlet>
