@@ -30,7 +30,7 @@ const db = getFirestore()
 
 // Collection reference
 
-//const colRef = collection(db)
+//const colRef = collection(db) This need to be fixed
 
 // Function to log in the user
 export async function loginUser(username: string, password: string): Promise<boolean> {
