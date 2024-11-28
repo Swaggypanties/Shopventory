@@ -7,9 +7,9 @@ const Home: React.FC = () => {
   
   return (
     <IonPage>
-      <IonHeader>
+      <IonHeader className="ion-text-center">
         <IonToolbar color={'success'}>
-          <IonTitle> <IonIcon icon={basketOutline}  size='large'/>Shopventory </IonTitle>
+          <IonTitle>SHOPVENTORY</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-text-center" fullscreen>
