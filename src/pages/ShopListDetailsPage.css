@@ -1,0 +1,19 @@
+.title-header {
+    text-transform: capitalize;
+  }
+  
+  .item-purchased {
+    text-decoration: line-through;
+  }
+  
+  .quantity-input {
+    max-width: 50px;
+    text-align: center;
+  }
+  
+  .delete-icon {
+    font-size: 22px;
+    min-width: 22px;
+    min-height: 22px;
+  }
+  

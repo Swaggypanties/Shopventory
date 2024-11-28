@@ -14,6 +14,7 @@ import {
 import { arrowBackCircle, basketOutline, closeCircle } from 'ionicons/icons';
 import { useParams, useHistory } from 'react-router-dom';
 import React, { useState } from 'react';
+import './ShopListDetailsPage.css';
 
 const ShopListDetailsPage: React.FC = () => {
   const { listId } = useParams<{ listId: string }>();
@@ -24,6 +25,9 @@ const ShopListDetailsPage: React.FC = () => {
     { id: 2, name: 'Kiwi', quantity: 3, purchased: false },
     { id: 3, name: 'Apple', quantity: 1, purchased: true },
   ]);
+
+  const [newItemName, setNewItemName] = useState('');
+  const [newItemQuantity, setNewItemQuantity] = useState(1);
 
   const togglePurchased = (id: number) => {
     setShoppingList(
@@ -43,6 +47,22 @@ const ShopListDetailsPage: React.FC = () => {
 
   const deleteItem = (id: number) => {
     setShoppingList(shoppingList.filter((item) => item.id !== id));
+  };
+
+  const addItem = () => {
+    if (newItemName.trim() !== '') {
+      setShoppingList([
+        ...shoppingList,
+        {
+          id: Date.now(),
+          name: newItemName,
+          quantity: newItemQuantity,
+          purchased: false,
+        },
+      ]);
+      setNewItemName('');
+      setNewItemQuantity(1);
+    }
   };
 
   return (
@@ -65,37 +85,56 @@ const ShopListDetailsPage: React.FC = () => {
       </IonHeader>
 
       <IonContent>
-        <IonTitle><h1>{listId}</h1></IonTitle>
+        <IonTitle>
+          <h1 className="title-header">{listId}</h1>
+        </IonTitle>
+
+        {/* Uuden tuotteen lisääminen */}
+        <IonItem>
+          <IonInput
+            placeholder="Item name"
+            value={newItemName}
+            onIonChange={(e) => setNewItemName(e.detail.value!)}
+          />
+          <IonInput
+            type="number"
+            placeholder="Quantity"
+            value={newItemQuantity}
+            onIonChange={(e) => setNewItemQuantity(parseInt(e.detail.value!, 10))}
+            style={{ maxWidth: '70px', textAlign: 'center' }}
+          />
+          <IonButton onClick={addItem} color="success">
+            Add Item
+          </IonButton>
+        </IonItem>
+
+        {/* Tuotelista */}
         <IonList>
           {shoppingList.map((item) => (
-          <IonItem key={item.id}>
-            <IonLabel
-            style={{
-              textDecoration: item.purchased ? 'line-through' : 'none',
-            }}
-            onClick={() => togglePurchased(item.id)}
-            >
-            {item.name}
-            </IonLabel>
-          <IonInput
-          type="number"
-          value={item.quantity}
-          onIonChange={(e) =>
-            updateQuantity(item.id, parseInt(e.detail.value!, 10))
-          }
-          style={{
-            maxWidth: '50px',
-            textAlign: 'center',
-          }}
-          slot="end"
-          />
-          <IonIcon
-          icon={closeCircle}
-          color="dark"
-          slot="end"
-          onClick={() => deleteItem(item.id)}
-          />
-          </IonItem>
+            <IonItem key={item.id}>
+              <IonLabel
+                className={item.purchased ? 'item-purchased' : ''}
+                onClick={() => togglePurchased(item.id)}
+              >
+                {item.name}
+              </IonLabel>
+              <IonInput
+                type="number"
+                value={item.quantity}
+                onIonChange={(e) =>
+                  updateQuantity(item.id, parseInt(e.detail.value!, 10))
+                }
+                className="quantity-input"
+                slot="end"
+              />
+              <IonIcon
+                icon={closeCircle}
+                color="dark"
+                slot="end"
+                className="delete-icon"
+                onClick={() => deleteItem(item.id)}
+              />
+            </IonItem>
           ))}
         </IonList>
       </IonContent>
