@@ -21,11 +21,12 @@ const Login: React.FC = () => {
 
     return (
         <IonPage>
-            <IonHeader>
+            <IonHeader className="ion-text-center">
                 <IonToolbar color={'success'}>
-                    <IonTitle>Login</IonTitle>
+                    <IonTitle>SHOPVENTORY</IonTitle>
                 </IonToolbar>
             </IonHeader>
+            <h1 className='ion-text-center'>Login</h1>
             <IonContent className="ion-padding">
                 <IonInput
                     placeholder="Username"
@@ -37,7 +38,7 @@ const Login: React.FC = () => {
                     onIonChange={(e: any) => setPassword(e.target.value)}
                 />
                 <IonButton onClick={login} color={'success'}>Login</IonButton>
-                <p> Don't have an account yet? <Link to="/register">Register</Link> </p>
+                <p className='ion-text-center'> Don't have an account yet? <Link to="/register">Register</Link> </p>
             </IonContent>
         </IonPage>
     );
