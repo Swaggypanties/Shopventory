@@ -28,11 +28,12 @@ function Register() {
 
     return (
         <IonPage>
-            <IonHeader>
+            <IonHeader className="ion-text-center">
                 <IonToolbar color={'success'}>
-                    <IonTitle>Register</IonTitle>
+                    <IonTitle>SHOPVENTORY</IonTitle>
                 </IonToolbar>
             </IonHeader>
+            <h1 className='ion-text-center'>Register</h1>
             <IonContent className="ion-padding">
                 <IonInput placeholder="Username"
                     onIonChange={(e: any) => setUsername(e.target.value)} />
@@ -49,7 +50,7 @@ function Register() {
 
                 <IonButton onClick={register} color={'success'}>Register</IonButton>
 
-                <p> Already have an account? <Link to="/login">Login</Link> </p>
+                <p className='ion-text-center'> Already have an account? <Link to="/login">Login</Link> </p>
 
             </IonContent>
         </IonPage>

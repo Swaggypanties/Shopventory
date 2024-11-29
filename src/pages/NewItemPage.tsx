@@ -1,4 +1,4 @@
-import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon } from '@ionic/react';
+import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon, IonInput, IonItem, IonSelect, IonSelectOption } from '@ionic/react';
 import { arrowBackCircle, atOutline, basketOutline } from 'ionicons/icons';
 import { pricetagOutline } from 'ionicons/icons';
 import ExploreContainer from '../components/ExploreContainer';
@@ -29,15 +29,21 @@ const NewItemPage: React.FC = () => {
             </IonButton>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="ion-text-center" fullscreen>
-        <div className="home-content">
-          <h1><strong>Create new item?</strong></h1>
-          <IonIcon icon={pricetagOutline} className="large-icon"  />
-          
-          
-
-        </div>
-
+      
+        <IonContent className="ion-text-center" fullscreen>
+          <div className="home-content">
+            <h1><strong>Create new item</strong></h1>
+            <IonInput fill="outline" placeholder="Enter text"></IonInput>
+            <IonItem>
+            <IonSelect label="Select Category" placeholder="Categories">
+              <IonSelectOption value="fruits">Fruits</IonSelectOption>
+              <IonSelectOption value="games">Games</IonSelectOption>
+              <IonSelectOption value="clothes">Clothes</IonSelectOption>
+            </IonSelect>
+            </IonItem>
+            <IonInput placeholder="Add New Category"></IonInput>
+            <IonButton expand="block" color={'success'}>Create New Item</IonButton>
+          </div>
         <ExploreContainer />
       </IonContent>
     </IonPage>
