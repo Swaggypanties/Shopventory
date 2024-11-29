@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import {getFirestore, collection} from 'firebase/firestore'
+import {getFirestore, collection, setDoc, doc} from 'firebase/firestore'
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { toast } from './toast';
 
@@ -53,8 +53,13 @@ export async function registerUser(username: string, password: string): Promise<
   try {
     const auth = getAuth(); // Initialize Firebase Auth
     const res = await createUserWithEmailAndPassword(auth, email, password); // Register new user
+    const uid = res.user.uid //UID is unique user ID and this will get for each registered user
+
+    //This will create for each user their own collection
+    const userCollectionRef = doc (db, "user", uid); //This will refer to user's document
+    await setDoc(userCollectionRef, { createdAt: new Date(), username}); //This will initial data
     
-    console.log("User registered:", res); // Optional: Log response for debugging
+    console.log("User registered and Firestore collection created:", res); // Optional: Log response for debugging
     return true;
   } catch (error: any) {
     toast(error.message, 4000); // Show error message to the user via toast
