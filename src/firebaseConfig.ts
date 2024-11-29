@@ -26,7 +26,7 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize firestoreDB
 
-const db = getFirestore()
+const db = getFirestore(app)
 
 // Collection reference
 
