@@ -28,6 +28,9 @@ const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app)
 
+// Export Firestore database so you can use it in other pages
+export { db };
+
 // Collection reference
 
 //const colRef = collection(db) This need to be fixed
