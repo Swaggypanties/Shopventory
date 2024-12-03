@@ -34,6 +34,7 @@ const NewListPage: React.FC = () => {
         createdAt: new Date(),
       });
       alert('New list created successfully!');
+      history.push('/ListsPage');
     } catch (error) {
       console.error('Error creating list:', error);
     }
