@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, doc, setDoc, collection } from "firebase/firestore";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { toast } from './toast';
 
@@ -52,29 +52,15 @@ export async function registerUser(username: string, password: string): Promise<
       username: username
     });
 
-    // Create Default collection for user
-    const defaultRef = doc(db, `users/${uid}/default`);
-    await setDoc(defaultRef, {
-      name: "Default Items",
-      type: "default",
-      createdAt: new Date()
-    });
 
-    // Create Lists collection with Shopping and Inventory
-    const lists = [
-      { name: "Default Shopping List", type: "shopping", createdAt: new Date() },
-      { name: "Default Inventory List", type: "inventory", createdAt: new Date() }
-    ];
+    
 
-    for (const list of lists) {
-      const listId = Date.now().toString(); // Generate unique ID for each list
-      const listRef = doc(db, `users/${uid}/lists`, listId);
-      await setDoc(listRef, list);
-    }
+    // Create additional lists (Shopping and Inventory)
 
-    console.log("User registered and default lists created:", res);
+    console.log("User registered:", res);
     return true;
   } catch (error: any) {
+    console.error("Error during user registration:", error);
     toast(error.message, 4000);
     return false;
   }
