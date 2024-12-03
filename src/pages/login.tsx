@@ -1,8 +1,9 @@
-import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput } from '@ionic/react';
+import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonInput, IonIcon } from '@ionic/react';
+import { arrowBackCircle, basketOutline } from 'ionicons/icons';
 import React, { useState } from 'react';
-import { loginUser } from '../firebaseConfig';
-import { Link, useHistory } from 'react-router-dom'; // Import useHistory
+import { Link, useHistory } from 'react-router-dom';
 import { toast } from '../toast';
+import { loginUser } from '../firebaseConfig';
 
 const Login: React.FC = () => {
     const [username, setUsername] = useState('');
@@ -10,20 +11,31 @@ const Login: React.FC = () => {
     const history = useHistory(); // Initialize useHistory
 
     async function login() {
-       const res = await loginUser(username, password);
-       if (!res) {
-           toast('Error logging in with your credentials');
-       } else {
-           toast('You have logged in!');
-           history.push('/MainPage'); // Redirect to moviepage after successful login
-       }
+        const res = await loginUser(username, password);
+        if (!res) {
+            toast('Error logging in with your credentials');
+        } else {
+            toast('You have logged in!');
+            history.push('/MainPage'); // Redirect to MainPage after successful login
+        }
     }
 
     return (
         <IonPage>
-            <IonHeader className="ion-text-center">
+            <IonHeader>
                 <IonToolbar color={'success'}>
-                    <IonTitle>SHOPVENTORY</IonTitle>
+                    <IonButton
+                        onClick={() => history.goBack()} // Navigate back to the previous page
+                        fill="clear"
+                        slot="start"
+                        style={{ width: 'auto', height: 'auto' }}
+                    >
+                        <IonIcon color="dark" size="large" icon={arrowBackCircle} />
+                    </IonButton>
+                    <IonTitle className="ion-text-center" style={{ flex: 1 }}>SHOPVENTORY</IonTitle>
+                    <div slot="end" style={{ display: 'flex', alignItems: 'center', paddingRight: '10px' }}>
+                        <IonIcon icon={basketOutline} color="dark" size="large" />
+                    </div>
                 </IonToolbar>
             </IonHeader>
             <h1 className='ion-text-center'>Login</h1>
@@ -38,7 +50,9 @@ const Login: React.FC = () => {
                     onIonChange={(e: any) => setPassword(e.target.value)}
                 />
                 <IonButton onClick={login} color={'success'}>Login</IonButton>
-                <p className='ion-text-center'> Don't have an account yet? <Link to="/register">Register</Link> </p>
+                <p className='ion-text-center'>
+                    Don't have an account yet? <Link to="/register">Register</Link>
+                </p>
             </IonContent>
         </IonPage>
     );

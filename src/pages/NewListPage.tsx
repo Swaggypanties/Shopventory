@@ -42,22 +42,27 @@ const NewListPage: React.FC = () => {
 
   return (
     <IonPage>
-      <IonHeader>
-        <IonToolbar color={'success'}>
-          <IonButton slot='start' fill='clear' style={{ width: 'auto', height: 'auto' }}>
-            <IonIcon icon={basketOutline} color='dark' size='large' />
-          </IonButton>
-          <IonTitle className="ion-text-center">SHOPVENTORY</IonTitle>
-          <IonButton
-            onClick={() => history.goBack()} // Korjattu back-toiminto
-            fill='clear'
-            slot='end'
-            style={{ width: 'auto', height: 'auto' }}
-          >
-            <IonIcon color='dark' size='large' icon={arrowBackCircle} />
-          </IonButton>
-        </IonToolbar>
-      </IonHeader>
+    <IonHeader>
+    <IonToolbar color={'success'}>
+      <IonButton
+        onClick={() => history.goBack()} // Go back to the previous page
+        fill="clear"
+        slot="start"
+        style={{ width: 'auto', height: 'auto' }}
+        >
+      <IonIcon color="dark" size="large" icon={arrowBackCircle} />
+    </IonButton>
+    <IonTitle className="ion-text-center">SHOPVENTORY</IonTitle>
+    <IonButton
+      routerLink="/MainPage"
+      fill="clear"
+      slot="end"
+      style={{ width: 'auto', height: 'auto' }}
+    >
+      <IonIcon icon={basketOutline} color="dark" size="large" />
+    </IonButton>
+  </IonToolbar>
+</IonHeader>
       <IonContent className="ion-text-center" fullscreen>
         <h1>Create New List</h1>
         <IonRadioGroup value={listType} onIonChange={(e) => setListType(e.detail.value)}>
