@@ -1,18 +1,15 @@
 import { IonButton, IonContent, IonHeader, IonPage, IonTitle, IonToolbar, IonIcon, IonInput, IonItem, IonSelect, IonSelectOption } from '@ionic/react';
-import { arrowBackCircle, atOutline, basketOutline } from 'ionicons/icons';
-import { pricetagOutline } from 'ionicons/icons';
-import ExploreContainer from '../components/ExploreContainer';
+import { arrowBackCircle, basketOutline } from 'ionicons/icons';
 import { useState } from 'react';
 import { db } from '../firebaseConfig'; 
 import { doc, setDoc, collection } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-
-
-
+import { useHistory } from 'react-router-dom';
 
 const NewItemPage: React.FC = () => {
   const [itemName, setItemName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const history = useHistory();
 
   const handleCreateItem = async () => {
     const auth = getAuth();
@@ -54,40 +51,38 @@ const NewItemPage: React.FC = () => {
     }
   };
 
-  
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar color={'success'}>
-          <IonButton slot='start' fill='clear' style={{ width: 'auto' , height:'auto' }}>
-            <IonIcon
-              icon={basketOutline}
-              color='dark'
-              size='large'/>
+          <IonButton slot='start' fill='clear' style={{ width: 'auto', height: 'auto' }}>
+            <IonIcon icon={basketOutline} color='dark' size='large' />
           </IonButton>
-          <IonTitle className="ion-text-center">
-            SHOPVENTORY
-          </IonTitle>
-            <IonButton 
-              routerLink="/MainPage" fill="clear" slot='end' style={{ width: 'auto' , height:'auto' }}>
-              <IonIcon
-              color='dark'
-              size='large'
-              icon={arrowBackCircle} 
-              />
-            </IonButton>
+          <IonTitle className="ion-text-center">SHOPVENTORY</IonTitle>
+          <IonButton 
+            onClick={() => history.goBack()} // Korjattu takaisin-toiminto
+            fill="clear" 
+            slot='end' 
+            style={{ width: 'auto', height: 'auto' }}>
+            <IonIcon icon={arrowBackCircle} color='dark' size='large' />
+          </IonButton>
         </IonToolbar>
       </IonHeader>
       
-        <IonContent className="ion-text-center" fullscreen>
-          <div className="home-content">
-            <h1><strong>Create new item</strong></h1>
-            <IonInput placeholder="Enter text"  fill="outline" 
-            value={itemName} // Bind state
-            onIonChange={(e: any) => setItemName(e.target.value)}></IonInput>
-            <IonItem>
-            <IonSelect label="Select Category" placeholder="Categories"   
-              value={selectedCategory} // Bind state
+      <IonContent className="ion-text-center" fullscreen>
+        <div className="home-content">
+          <h1><strong>Create new item</strong></h1>
+          <IonInput 
+            placeholder="Enter text"  
+            fill="outline" 
+            value={itemName} 
+            onIonChange={(e: any) => setItemName(e.target.value)} 
+          />
+          <IonItem>
+            <IonSelect 
+              label="Select Category" 
+              placeholder="Categories"   
+              value={selectedCategory} 
               onIonChange={(e: any) => setSelectedCategory(e.target.value)}>
               <IonSelectOption value="food">Foods</IonSelectOption>
               <IonSelectOption value="drink">Drinks</IonSelectOption>
@@ -96,10 +91,9 @@ const NewItemPage: React.FC = () => {
               <IonSelectOption value="electronics">Electronics</IonSelectOption>
               <IonSelectOption value="other">Other</IonSelectOption>
             </IonSelect>
-            </IonItem>
-            <IonButton expand="block" color={'success'} onClick={handleCreateItem}>Create New Item</IonButton>
-          </div>
-        <ExploreContainer />
+          </IonItem>
+          <IonButton expand="block" color={'success'} onClick={handleCreateItem}>Create New Item</IonButton>
+        </div>
       </IonContent>
     </IonPage>
   );

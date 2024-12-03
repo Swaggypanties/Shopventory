@@ -37,11 +37,10 @@ import Register from './pages/register';
 import Login from './pages/login';
 import MainPage from './pages/MainPage';
 import NewListPage from './pages/NewListPage';
-import ViewInvListPage from './pages/ViewInvListPage';
 import NewItemPage from './pages/NewItemPage';
-import ViewShopListPage from './pages/ViewShopListPage';
 import ShopListDetailsPage from './pages/ShopListDetailsPage';
 import InvListDetailsPage from './pages/InvListDetailsPage';
+import ListsPage from './pages/ListsPage';
 
 
 setupIonicReact();
@@ -57,12 +56,10 @@ const App: React.FC = () => (
         <Route path="/MainPage" component={MainPage} exact/>
         <Route path="/NewListPage" component={NewListPage} exact/>
         <Route path="/NewItemPage" component={NewItemPage} exact/>
-        <Route path="/ViewInvListPage" component={ViewInvListPage} exact/>
-        <Route path="/ViewShopListPage" component={ViewShopListPage} exact/>
         <Route path="/list/:listId" component={ShopListDetailsPage} />
-        <Route path="/viewshoplist" component={ViewShopListPage} />
         <Route path="/newlist" component={NewListPage} />
         <Route path="/invlist/:listId" component={InvListDetailsPage} />
+        <Route path="/ListsPage" component={ListsPage} exact />
 
 
         </Route>

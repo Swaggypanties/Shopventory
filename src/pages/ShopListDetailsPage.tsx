@@ -1,67 +1,188 @@
 import {
+  IonButton,
   IonContent,
   IonHeader,
   IonPage,
   IonTitle,
   IonToolbar,
-  IonButton,
   IonIcon,
   IonList,
   IonItem,
   IonLabel,
+  IonSelect,
+  IonSelectOption,
   IonInput,
 } from '@ionic/react';
-import { arrowBackCircle, basketOutline, closeCircle } from 'ionicons/icons';
+import {
+  arrowBackCircle,
+  basketOutline,
+  closeCircle,
+  addCircle,
+  removeCircle,
+} from 'ionicons/icons';
 import { useParams, useHistory } from 'react-router-dom';
-import React, { useState } from 'react';
-import './ShopListDetailsPage.css';
+import React, { useState, useEffect } from 'react';
+import { db } from '../firebaseConfig';
+import { getAuth } from 'firebase/auth';
+import { collection, doc, setDoc, getDocs, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 
 const ShopListDetailsPage: React.FC = () => {
   const { listId } = useParams<{ listId: string }>();
   const history = useHistory();
 
-  const [shoppingList, setShoppingList] = useState([
-    { id: 1, name: 'Orange', quantity: 1, purchased: false },
-    { id: 2, name: 'Kiwi', quantity: 3, purchased: false },
-    { id: 3, name: 'Apple', quantity: 1, purchased: true },
-  ]);
+  const [shoppingList, setShoppingList] = useState<any[]>([]);
+  const [availableItems, setAvailableItems] = useState<any[]>([]);
+  const [selectedItem, setSelectedItem] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [listName, setListName] = useState('');
 
-  const [newItemName, setNewItemName] = useState('');
-  const [newItemQuantity, setNewItemQuantity] = useState(1);
+  useEffect(() => {
+    async function fetchItems() {
+      const user = getAuth().currentUser;
+      if (!user) {
+        alert('User not logged in!');
+        return;
+      }
 
-  const togglePurchased = (id: number) => {
-    setShoppingList(
-      shoppingList.map((item) =>
-        item.id === id ? { ...item, purchased: !item.purchased } : item
-      )
-    );
-  };
+      const listItemsRef = collection(db, `users/${user.uid}/lists/${listId}/items`);
+      const querySnapshot = await getDocs(listItemsRef);
 
-  const updateQuantity = (id: number, newQuantity: number) => {
-    setShoppingList(
-      shoppingList.map((item) =>
-        item.id === id ? { ...item, quantity: newQuantity } : item
-      )
-    );
-  };
+      const items = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
-  const deleteItem = (id: number) => {
-    setShoppingList(shoppingList.filter((item) => item.id !== id));
-  };
+      setShoppingList(items);
+    }
 
-  const addItem = () => {
-    if (newItemName.trim() !== '') {
-      setShoppingList([
-        ...shoppingList,
-        {
-          id: Date.now(),
-          name: newItemName,
-          quantity: newItemQuantity,
-          purchased: false,
-        },
+    async function fetchAvailableItems() {
+      const user = getAuth().currentUser;
+      if (!user) return;
+
+      const defaultItemsRef = collection(db, `users/${user.uid}/lists/default/items`);
+      const querySnapshot = await getDocs(defaultItemsRef);
+
+      const items = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setAvailableItems(items);
+    }
+
+    async function fetchListName() {
+      const user = getAuth().currentUser;
+      if (!user) return;
+
+      const listRef = doc(db, `users/${user.uid}/lists/${listId}`);
+      const listDoc = await getDoc(listRef);
+
+      if (listDoc.exists()) {
+        setListName(listDoc.data()?.name || listId);
+      } else {
+        console.error('List not found');
+        setListName(listId); // Fallback to ID if name is not found
+      }
+    }
+
+    fetchItems();
+    fetchAvailableItems();
+    fetchListName();
+  }, [listId]);
+
+  const addItemToShoppingList = async () => {
+    if (!selectedItem) {
+      alert('Please select an item.');
+      return;
+    }
+
+    const user = getAuth().currentUser;
+    if (!user) {
+      alert('User not logged in!');
+      return;
+    }
+
+    const selectedItemData = availableItems.find((item) => item.id === selectedItem);
+    if (!selectedItemData) {
+      alert('Item not found.');
+      return;
+    }
+
+    const listItemsRef = collection(db, `users/${user.uid}/lists/${listId}/items`);
+    const newItemRef = doc(listItemsRef);
+
+    try {
+      await setDoc(newItemRef, {
+        name: selectedItemData.name,
+        category: selectedItemData.category,
+        quantity: quantity,
+        checked: false,
+        createdAt: new Date(),
+      });
+
+      setShoppingList((prevList) => [
+        ...prevList,
+        { id: newItemRef.id, ...selectedItemData, quantity, checked: false },
       ]);
-      setNewItemName('');
-      setNewItemQuantity(1);
+      setSelectedItem('');
+      setQuantity(1);
+    } catch (error) {
+      console.error('Error adding item:', error);
+    }
+  };
+
+  const updateQuantity = async (id: string, delta: number) => {
+    const user = getAuth().currentUser;
+    if (!user) return;
+
+    const itemRef = doc(db, `users/${user.uid}/lists/${listId}/items/${id}`);
+    const currentItem = shoppingList.find((item) => item.id === id);
+
+    if (!currentItem) return;
+
+    const newQuantity = Math.max(0, currentItem.quantity + delta);
+
+    try {
+      await updateDoc(itemRef, { quantity: newQuantity });
+      setShoppingList((prevList) =>
+        prevList.map((item) =>
+          item.id === id ? { ...item, quantity: newQuantity } : item
+        )
+      );
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+    }
+  };
+
+  const toggleChecked = async (id: string, checked: boolean) => {
+    const user = getAuth().currentUser;
+    if (!user) return;
+
+    const itemRef = doc(db, `users/${user.uid}/lists/${listId}/items/${id}`);
+
+    try {
+      await updateDoc(itemRef, { checked: !checked });
+      setShoppingList((prevList) =>
+        prevList.map((item) =>
+          item.id === id ? { ...item, checked: !checked } : item
+        )
+      );
+    } catch (error) {
+      console.error('Error updating checked status:', error);
+    }
+  };
+
+  const deleteItem = async (id: string) => {
+    const user = getAuth().currentUser;
+    if (!user) return;
+
+    const itemRef = doc(db, `users/${user.uid}/lists/${listId}/items/${id}`);
+
+    try {
+      await deleteDoc(itemRef);
+      setShoppingList((prevList) => prevList.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error('Error deleting item:', error);
     }
   };
 
@@ -85,52 +206,60 @@ const ShopListDetailsPage: React.FC = () => {
       </IonHeader>
 
       <IonContent>
-        <IonTitle>
-          <h1 className="title-header">{listId}</h1>
+        <IonTitle className="page-title">
+          <h1>{listName}</h1>
         </IonTitle>
 
-        {/* Uuden tuotteen lisääminen */}
         <IonItem>
+          <IonSelect
+            placeholder="Select Item"
+            value={selectedItem}
+            onIonChange={(e) => setSelectedItem(e.detail.value)}
+          >
+            {availableItems.map((item) => (
+              <IonSelectOption key={item.id} value={item.id}>
+                {item.name} ({item.category})
+              </IonSelectOption>
+            ))}
+          </IonSelect>
           <IonInput
-            placeholder="Item name"
-            value={newItemName}
-            onIonChange={(e) => setNewItemName(e.detail.value!)}
-          />
-          <IonInput className='quantity-input'
             type="number"
             placeholder="Quantity"
-            value={newItemQuantity}
-            onIonChange={(e) => setNewItemQuantity(parseInt(e.detail.value!, 10))}
+            value={quantity}
+            onIonChange={(e) => setQuantity(parseInt(e.detail.value!, 10))}
           />
-          <IonButton onClick={addItem} color="success">
+          <IonButton onClick={addItemToShoppingList} color="success">
             Add Item
+          </IonButton>
+          <IonButton routerLink="/NewItemPage" color="success">
+            Create New Item
           </IonButton>
         </IonItem>
 
-        {/* Tuotelista */}
         <IonList>
           {shoppingList.map((item) => (
             <IonItem key={item.id}>
               <IonLabel
-                className={item.purchased ? 'item-purchased' : ''}
-                onClick={() => togglePurchased(item.id)}
+                style={{
+                  textDecoration: item.checked ? 'line-through' : 'none',
+                }}
+                onClick={() => toggleChecked(item.id, item.checked)}
               >
                 {item.name}
               </IonLabel>
-              <IonInput
-                type="number"
-                value={item.quantity}
-                onIonChange={(e) =>
-                  updateQuantity(item.id, parseInt(e.detail.value!, 10))
-                }
-                className="quantity-input"
-                slot="end"
-              />
+              <div className="item-controls">
+                <IonButton fill="clear" onClick={() => updateQuantity(item.id, -1)}>
+                  <IonIcon icon={removeCircle} color="success" />
+                </IonButton>
+                <IonLabel>{item.quantity}</IonLabel>
+                <IonButton fill="clear" onClick={() => updateQuantity(item.id, 1)}>
+                  <IonIcon icon={addCircle} color="success" />
+                </IonButton>
+              </div>
               <IonIcon
                 icon={closeCircle}
                 color="dark"
                 slot="end"
-                className="delete-icon"
                 onClick={() => deleteItem(item.id)}
               />
             </IonItem>
