@@ -168,60 +168,58 @@ const InvListDetailsPage: React.FC = () => {
   </IonToolbar>
 </IonHeader>
 
-      <IonContent>
-        <IonTitle className="page-title">
-          <h1>{listName}</h1>
-        </IonTitle>
+<IonContent>
+  <IonTitle className="page-title">
+    <h1>{listName}</h1>
+  </IonTitle>
 
-        <IonItem>
-          <IonSelect
-            placeholder="Select Item"
-            value={selectedItem}
-            onIonChange={(e) => setSelectedItem(e.detail.value)}
-          >
-            {availableItems.map((item) => (
-              <IonSelectOption key={item.id} value={item.id}>
-                {item.name} ({item.category})
-              </IonSelectOption>
-            ))}
-          </IonSelect>
-          <IonButton onClick={addItemToInventoryList} color="success">
-            Add Item
-          </IonButton>
-          <IonButton routerLink="/NewItemPage" color="success">
-            Create New Item
-          </IonButton>
-        </IonItem>
+  <IonItem className="button-container">
+  <IonSelect
+    placeholder="Select Item"
+    value={selectedItem}
+    onIonChange={(e) => setSelectedItem(e.detail.value)}
+  >
+    {availableItems.map((item) => (
+      <IonSelectOption key={item.id} value={item.id}>
+        {item.name} ({item.category})
+      </IonSelectOption>
+    ))}
+  </IonSelect>
+  <div className="buttons">
+    <IonButton onClick={addItemToInventoryList} color="success" className="action-button">
+      Add Item
+    </IonButton>
+    <IonButton routerLink="/NewItemPage" color="success" className="action-button">
+      +
+    </IonButton>
+  </div>
+</IonItem>
 
-        <IonList>
-          {inventoryList.map((item) => (
-           <IonItem key={item.id}>
-           <IonLabel>{item.name}</IonLabel>
-           <div className="item-controls">
-             <IonButton
-               fill="clear"
-               onClick={() => updateQuantity(item.id, -1)}
-             >
-               <IonIcon icon={removeCircle} color="success" />
-             </IonButton>
-             <IonLabel>{item.quantity}</IonLabel>
-             <IonButton
-               fill="clear"
-               onClick={() => updateQuantity(item.id, 1)}
-             >
-               <IonIcon icon={addCircle} color="success" />
-             </IonButton>
-           </div>
-           <IonIcon
-             icon={closeCircle}
-             color="dark"
-             slot="end"
-             onClick={() => deleteItem(item.id)}
-           />
-         </IonItem>
-          ))}
-        </IonList>
-      </IonContent>
+
+  <IonList>
+    {inventoryList.map((item) => (
+      <IonItem key={item.id}>
+        <IonLabel>{item.name}</IonLabel>
+        <div className="item-controls">
+          <IonButton fill="clear" onClick={() => updateQuantity(item.id, -1)}>
+            <IonIcon icon={removeCircle} color="success" />
+          </IonButton>
+          <IonLabel>{item.quantity}</IonLabel>
+          <IonButton fill="clear" onClick={() => updateQuantity(item.id, 1)}>
+            <IonIcon icon={addCircle} color="success" />
+          </IonButton>
+        </div>
+        <IonIcon
+          icon={closeCircle}
+          color="dark"
+          slot="end"
+          onClick={() => deleteItem(item.id)}
+        />
+      </IonItem>
+    ))}
+  </IonList>
+</IonContent>
+
     </IonPage>
   );
 };

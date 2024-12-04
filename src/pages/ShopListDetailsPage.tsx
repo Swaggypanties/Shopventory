@@ -25,6 +25,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { getAuth } from 'firebase/auth';
 import { collection, doc, setDoc, getDocs, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
+import './ShopListDetailsPage.css';
 
 const ShopListDetailsPage: React.FC = () => {
   const { listId } = useParams<{ listId: string }>();
@@ -210,67 +211,72 @@ const ShopListDetailsPage: React.FC = () => {
   </IonToolbar>
 </IonHeader>
 
-      <IonContent>
-        <IonTitle className="page-title">
-          <h1>{listName}</h1>
-        </IonTitle>
+<IonContent>
+  <IonTitle className="page-title">
+    <h1>{listName}</h1>
+  </IonTitle>
 
-        <IonItem>
-          <IonSelect
-            placeholder="Select Item"
-            value={selectedItem}
-            onIonChange={(e) => setSelectedItem(e.detail.value)}
-          >
-            {availableItems.map((item) => (
-              <IonSelectOption key={item.id} value={item.id}>
-                {item.name} ({item.category})
-              </IonSelectOption>
-            ))}
-          </IonSelect>
-          <IonInput
-            type="number"
-            placeholder="Quantity"
-            value={quantity}
-            onIonChange={(e) => setQuantity(parseInt(e.detail.value!, 10))}
-          />
-          <IonButton onClick={addItemToShoppingList} color="success">
-            Add Item
-          </IonButton>
-          <IonButton routerLink="/NewItemPage" color="success">
-            Create New Item
-          </IonButton>
-        </IonItem>
+  <IonItem className="button-container">
+  <IonSelect
+    placeholder="Select Item"
+    value={selectedItem}
+    onIonChange={(e) => setSelectedItem(e.detail.value)}
+  >
+    {availableItems.map((item) => (
+      <IonSelectOption key={item.id} value={item.id}>
+        {item.name} ({item.category})
+      </IonSelectOption>
+    ))}
+  </IonSelect>
+  <IonInput
+    type="number"
+    placeholder="Quantity"
+    value={quantity}
+    onIonChange={(e) => setQuantity(parseInt(e.detail.value!, 10))}
+    className="quantity-input"
+  />
+  <div className="buttons">
+    <IonButton onClick={addItemToShoppingList} color="success" className="action-button">
+      Add Item
+    </IonButton>
+    <IonButton routerLink="/NewItemPage" color="success" className="action-button">
+      +
+    </IonButton>
+  </div>
+</IonItem>
 
-        <IonList>
-          {shoppingList.map((item) => (
-            <IonItem key={item.id}>
-              <IonLabel
-                style={{
-                  textDecoration: item.checked ? 'line-through' : 'none',
-                }}
-                onClick={() => toggleChecked(item.id, item.checked)}
-              >
-                {item.name}
-              </IonLabel>
-              <div className="item-controls">
-                <IonButton fill="clear" onClick={() => updateQuantity(item.id, -1)}>
-                  <IonIcon icon={removeCircle} color="success" />
-                </IonButton>
-                <IonLabel>{item.quantity}</IonLabel>
-                <IonButton fill="clear" onClick={() => updateQuantity(item.id, 1)}>
-                  <IonIcon icon={addCircle} color="success" />
-                </IonButton>
-              </div>
-              <IonIcon
-                icon={closeCircle}
-                color="dark"
-                slot="end"
-                onClick={() => deleteItem(item.id)}
-              />
-            </IonItem>
-          ))}
-        </IonList>
-      </IonContent>
+
+  <IonList>
+    {shoppingList.map((item) => (
+      <IonItem key={item.id}>
+        <IonLabel
+          style={{
+            textDecoration: item.checked ? 'line-through' : 'none',
+          }}
+          onClick={() => toggleChecked(item.id, item.checked)}
+        >
+          {item.name}
+        </IonLabel>
+        <div className="item-controls">
+          <IonButton fill="clear" onClick={() => updateQuantity(item.id, -1)}>
+            <IonIcon icon={removeCircle} color="success" />
+          </IonButton>
+          <IonLabel>{item.quantity}</IonLabel>
+          <IonButton fill="clear" onClick={() => updateQuantity(item.id, 1)}>
+            <IonIcon icon={addCircle} color="success" />
+          </IonButton>
+        </div>
+        <IonIcon
+          icon={closeCircle}
+          color="dark"
+          slot="end"
+          onClick={() => deleteItem(item.id)}
+        />
+      </IonItem>
+    ))}
+  </IonList>
+</IonContent>
+
     </IonPage>
   );
 };
