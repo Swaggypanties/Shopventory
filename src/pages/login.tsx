@@ -24,6 +24,7 @@ const Login: React.FC = () => {
         <IonPage>
             <IonHeader>
                 <IonToolbar color={'success'}>
+                    {/* Back button aligned to the left */}
                     <IonButton
                         onClick={() => history.goBack()} // Navigate back to the previous page
                         fill="clear"
@@ -32,13 +33,21 @@ const Login: React.FC = () => {
                     >
                         <IonIcon color="dark" size="large" icon={arrowBackCircle} />
                     </IonButton>
-                    <IonTitle className="ion-text-center" style={{ flex: 1 }}>SHOPVENTORY</IonTitle>
-                    <div slot="end" style={{ display: 'flex', alignItems: 'center', paddingRight: '10px' }}>
+
+                    {/* Centered title */}
+                    <IonTitle className="ion-text-center">SHOPVENTORY</IonTitle>
+
+                    {/* Basket icon aligned to the right */}
+                    <IonButton
+                        fill="clear"
+                        slot="end"
+                        style={{ width: 'auto', height: 'auto' }}
+                    >
                         <IonIcon icon={basketOutline} color="dark" size="large" />
-                    </div>
+                    </IonButton>
                 </IonToolbar>
             </IonHeader>
-            <h1 className='ion-text-center'>Login</h1>
+            <h1 className="ion-text-center">Login</h1>
             <IonContent className="ion-padding">
                 <IonInput
                     placeholder="Username"
@@ -50,7 +59,7 @@ const Login: React.FC = () => {
                     onIonChange={(e: any) => setPassword(e.target.value)}
                 />
                 <IonButton onClick={login} color={'success'}>Login</IonButton>
-                <p className='ion-text-center'>
+                <p className="ion-text-center">
                     Don't have an account yet? <Link to="/register">Register</Link>
                 </p>
             </IonContent>
