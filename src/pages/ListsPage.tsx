@@ -11,6 +11,7 @@ import {
   IonItem,
   IonLabel,
   IonModal,
+  IonAlert,
 } from '@ionic/react';
 import {
   arrowBackCircle,
@@ -32,6 +33,7 @@ const ListsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
   const [showInfoModal, setShowInfoModal] = useState(false);
+  const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
   useEffect(() => {
     async function fetchLists() {
@@ -123,7 +125,7 @@ const ListsPage: React.FC = () => {
       </IonHeader>
 
       <IonContent className="ion-text-center" fullscreen>
-          <h1>Your Lists</h1>
+        <h1>Your Lists</h1>
 
         <IonSearchbar
           value={searchTerm}
@@ -146,7 +148,10 @@ const ListsPage: React.FC = () => {
                 color="danger"
                 icon={trashOutline}
                 slot="end"
-                onClick={() => setSelectedListId(list.id)}
+                onClick={() => {
+                  setSelectedListId(list.id);
+                  setShowDeleteAlert(true);
+                }}
               />
             </IonItem>
           ))}
@@ -172,16 +177,39 @@ const ListsPage: React.FC = () => {
           </IonContent>
         </IonModal>
 
+        {/* Delete Confirmation Alert */}
+        <IonAlert
+          isOpen={showDeleteAlert}
+          onDidDismiss={() => setShowDeleteAlert(false)}
+          header={'Delete List'}
+          message={'Are you sure you want to delete this list?'}
+          buttons={[
+            {
+              text: 'Cancel',
+              role: 'cancel',
+              handler: () => {
+                setSelectedListId(null);
+              },
+            },
+            {
+              text: 'Delete',
+              handler: () => {
+                if (selectedListId) handleDelete(selectedListId);
+              },
+            },
+          ]}
+        />
+
         <IonButton routerLink="/NewListPage" color="success" style={{ marginTop: '1rem' }}>
           Create New List
         </IonButton>
         <IonButton
-            fill="clear"
-            onClick={() => setShowInfoModal(true)}
-            style={{ marginRight: '1rem' }}
-          >
-            <IonIcon icon={informationCircle} color="success" size="large" />
-          </IonButton>
+          fill="clear"
+          onClick={() => setShowInfoModal(true)}
+          style={{ marginRight: '1rem' }}
+        >
+          <IonIcon icon={informationCircle} color="success" size="large" />
+        </IonButton>
       </IonContent>
     </IonPage>
   );
