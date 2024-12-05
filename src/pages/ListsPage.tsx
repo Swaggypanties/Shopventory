@@ -10,21 +10,28 @@ import {
   IonList,
   IonItem,
   IonLabel,
-  IonAlert,
+  IonModal,
 } from '@ionic/react';
-import { arrowBackCircle, basketOutline, cartOutline, cubeOutline, trashOutline } from 'ionicons/icons';
+import {
+  arrowBackCircle,
+  basketOutline,
+  cartOutline,
+  cubeOutline,
+  trashOutline,
+  informationCircle,
+} from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { db } from '../firebaseConfig';
-import { collection, query, getDocs, deleteDoc, doc } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { collection, query, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const ListsPage: React.FC = () => {
   const history = useHistory();
   const [lists, setLists] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showAlert, setShowAlert] = useState(false);
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   useEffect(() => {
     async function fetchLists() {
@@ -79,7 +86,6 @@ const ListsPage: React.FC = () => {
       const listDocRef = doc(db, `users/${userId}/lists/${listId}`);
       await deleteDoc(listDocRef);
 
-      // Update local state
       setLists((prevLists) => prevLists.filter((list) => list.id !== listId));
       alert('List deleted successfully!');
     } catch (error) {
@@ -89,7 +95,6 @@ const ListsPage: React.FC = () => {
 
   const filteredLists = lists.filter((list) => {
     const term = searchTerm.toLowerCase();
-    // Match list name or list type
     return list.name.toLowerCase().includes(term) || list.type.toLowerCase().includes(term);
   });
 
@@ -98,7 +103,7 @@ const ListsPage: React.FC = () => {
       <IonHeader>
         <IonToolbar color={'success'}>
           <IonButton
-            onClick={() => history.goBack()} // Go back to the previous page
+            onClick={() => history.goBack()}
             fill="clear"
             slot="start"
             style={{ width: 'auto', height: 'auto' }}
@@ -118,7 +123,8 @@ const ListsPage: React.FC = () => {
       </IonHeader>
 
       <IonContent className="ion-text-center" fullscreen>
-        <h1>Your Lists</h1>
+          <h1>Your Lists</h1>
+
         <IonSearchbar
           value={searchTerm}
           onIonInput={(e: any) => setSearchTerm(e.target.value)}
@@ -129,51 +135,53 @@ const ListsPage: React.FC = () => {
           {filteredLists.map((list) => (
             <IonItem key={list.id} button>
               <IonIcon
-                aria-hidden="true"
+                aria-hidden="false"
                 color="success"
                 icon={list.type === 'shopping' ? cartOutline : cubeOutline}
                 slot="start"
               />
               <IonLabel onClick={() => openList(list.id, list.type)}>{list.name}</IonLabel>
               <IonIcon
-                aria-hidden="true"
+                aria-hidden="false"
                 color="danger"
                 icon={trashOutline}
                 slot="end"
-                onClick={() => {
-                  setSelectedListId(list.id);
-                  setShowAlert(true);
-                }}
+                onClick={() => setSelectedListId(list.id)}
               />
             </IonItem>
           ))}
         </IonList>
 
-        <IonAlert
-          isOpen={showAlert}
-          onDidDismiss={() => setShowAlert(false)}
-          header={'Delete List'}
-          message={'Are you sure you want to delete this list?'}
-          buttons={[
-            {
-              text: 'Cancel',
-              role: 'cancel',
-              handler: () => {
-                setSelectedListId(null);
-              },
-            },
-            {
-              text: 'Delete',
-              handler: () => {
-                if (selectedListId) handleDelete(selectedListId);
-              },
-            },
-          ]}
-        />
+        {/* Info Modal */}
+        <IonModal isOpen={showInfoModal} onDidDismiss={() => setShowInfoModal(false)}>
+          <IonHeader>
+            <IonToolbar color={'success'}>
+              <IonTitle>Lists Page Info</IonTitle>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent>
+            <IonList>
+              <IonItem>Search lists by name or type (Inventory/Shopping).</IonItem>
+              <IonItem>Tap a list to view or edit it.</IonItem>
+              <IonItem>Delete a list by pressing the trash icon.</IonItem>
+              <IonItem>Create a new list using the "Create New List" button.</IonItem>
+            </IonList>
+            <IonButton color={'success'} expand="block" onClick={() => setShowInfoModal(false)}>
+              Close
+            </IonButton>
+          </IonContent>
+        </IonModal>
 
-        <IonButton routerLink="/NewListPage" color="success">
+        <IonButton routerLink="/NewListPage" color="success" style={{ marginTop: '1rem' }}>
           Create New List
         </IonButton>
+        <IonButton
+            fill="clear"
+            onClick={() => setShowInfoModal(true)}
+            style={{ marginRight: '1rem' }}
+          >
+            <IonIcon icon={informationCircle} color="success" size="large" />
+          </IonButton>
       </IonContent>
     </IonPage>
   );

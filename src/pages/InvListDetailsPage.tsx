@@ -12,6 +12,7 @@ import {
   IonSelect,
   IonSelectOption,
   IonInput,
+  IonModal,
 } from '@ionic/react';
 import {
   arrowBackCircle,
@@ -19,6 +20,7 @@ import {
   closeCircle,
   addCircle,
   removeCircle,
+  informationCircle,
 } from 'ionicons/icons';
 import { useParams, useHistory } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
@@ -36,6 +38,7 @@ const InvListDetailsPage: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [listName, setListName] = useState('');
+  const [showInfoModal, setShowInfoModal] = useState(false); // Modal state
 
   useEffect(() => {
     async function fetchItems() {
@@ -121,10 +124,7 @@ const InvListDetailsPage: React.FC = () => {
       };
       await setDoc(newItemRef, newItem);
 
-      setInventoryList((prevList) => [
-        ...prevList,
-        { id: newItemRef.id, ...newItem },
-      ]);
+      setInventoryList((prevList) => [...prevList, { id: newItemRef.id, ...newItem }]);
       setSelectedItem('');
       setQuantity(1);
     } catch (error) {
@@ -246,6 +246,35 @@ const InvListDetailsPage: React.FC = () => {
             </IonItem>
           ))}
         </IonList>
+
+        {/* Info Button */}
+        <IonButton
+          fill="clear"
+          onClick={() => setShowInfoModal(true)}
+          style={{ marginTop: '1rem', marginBottom: '1rem' }}
+        >
+          <IonIcon icon={informationCircle} color="success" size="large" />
+        </IonButton>
+
+        {/* Info Modal */}
+        <IonModal isOpen={showInfoModal} onDidDismiss={() => setShowInfoModal(false)}>
+          <IonHeader>
+            <IonToolbar color={'success'}>
+              <IonTitle>Inventory List Info</IonTitle>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent>
+            <IonList>
+              <IonItem>Add items: Select from the dropdown, enter quantity, and press "Add Item."</IonItem>
+              <IonItem>If the desired item is not in the dropdown, press the "+" button to create a new item.</IonItem>
+              <IonItem>Adjust quantities: Use "+" or "-" buttons.</IonItem>
+              <IonItem>Delete items: Press the trash icon.</IonItem>
+            </IonList>
+            <IonButton color={'success'} expand="block" onClick={() => setShowInfoModal(false)}>
+              Close
+            </IonButton>
+          </IonContent>
+        </IonModal>
       </IonContent>
     </IonPage>
   );
