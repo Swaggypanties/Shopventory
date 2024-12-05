@@ -126,7 +126,7 @@ const NewItemPage: React.FC = () => {
         <IonModal isOpen={showInfoModal} onDidDismiss={() => setShowInfoModal(false)}>
           <IonHeader>
             <IonToolbar color="success">
-              <IonTitle>New Item Info</IonTitle>
+              <IonTitle>Create New Item Info</IonTitle>
             </IonToolbar>
           </IonHeader>
           <IonContent>

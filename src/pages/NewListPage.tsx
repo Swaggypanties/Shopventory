@@ -83,11 +83,11 @@ const NewListPage: React.FC = () => {
         <h1>Create New List</h1>
         <IonRadioGroup value={listType} onIonChange={(e) => setListType(e.detail.value)}>
           <IonItem>
-            <IonRadio value="shopping" slot="start" />
+            <IonRadio color={'success'} value="shopping" slot="start" />
             <IonLabel>Shopping</IonLabel>
           </IonItem>
           <IonItem>
-            <IonRadio value="inventory" slot="start" />
+            <IonRadio color={'success'} value="inventory" slot="start" />
             <IonLabel>Inventory</IonLabel>
           </IonItem>
         </IonRadioGroup>
@@ -115,7 +115,7 @@ const NewListPage: React.FC = () => {
         <IonModal isOpen={showInfoModal} onDidDismiss={() => setShowInfoModal(false)}>
           <IonHeader>
             <IonToolbar color={'success'}>
-              <IonTitle>New List Info</IonTitle>
+              <IonTitle>Create New List Info</IonTitle>
             </IonToolbar>
           </IonHeader>
           <IonContent>

@@ -156,7 +156,7 @@ const ListsPage: React.FC = () => {
         <IonModal isOpen={showInfoModal} onDidDismiss={() => setShowInfoModal(false)}>
           <IonHeader>
             <IonToolbar color={'success'}>
-              <IonTitle>Lists Page Info</IonTitle>
+              <IonTitle>Lists Info</IonTitle>
             </IonToolbar>
           </IonHeader>
           <IonContent>
