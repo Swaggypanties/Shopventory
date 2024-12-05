@@ -113,17 +113,18 @@ const ShopListDetailsPage: React.FC = () => {
     const newItemRef = doc(listItemsRef);
 
     try {
-      await setDoc(newItemRef, {
+      const newItem = {
         name: selectedItemData.name,
         category: selectedItemData.category,
         quantity: quantity,
         checked: false,
         createdAt: new Date(),
-      });
+      };
+      await setDoc(newItemRef, newItem);
 
       setShoppingList((prevList) => [
         ...prevList,
-        { id: newItemRef.id, ...selectedItemData, quantity, checked: false },
+        { id: newItemRef.id, ...newItem },
       ]);
       setSelectedItem('');
       setQuantity(1);
@@ -189,94 +190,90 @@ const ShopListDetailsPage: React.FC = () => {
 
   return (
     <IonPage>
-            <IonHeader>
-  <IonToolbar color={'success'}>
-    <IonButton
-      onClick={() => history.goBack()} // Go back to the previous page
-      fill="clear"
-      slot="start"
-      style={{ width: 'auto', height: 'auto' }}
-    >
-      <IonIcon color="dark" size="large" icon={arrowBackCircle} />
-    </IonButton>
-    <IonTitle className="ion-text-center">SHOPVENTORY</IonTitle>
-    <IonButton
-      routerLink="/MainPage"
-      fill="clear"
-      slot="end"
-      style={{ width: 'auto', height: 'auto' }}
-    >
-      <IonIcon icon={basketOutline} color="dark" size="large" />
-    </IonButton>
-  </IonToolbar>
-</IonHeader>
-
-<IonContent>
-  <IonTitle className="page-title">
-    <h1>{listName}</h1>
-  </IonTitle>
-
-  <IonItem className="button-container">
-  <IonSelect
-    placeholder="Select Item"
-    value={selectedItem}
-    onIonChange={(e) => setSelectedItem(e.detail.value)}
-  >
-    {availableItems.map((item) => (
-      <IonSelectOption key={item.id} value={item.id}>
-        {item.name} ({item.category})
-      </IonSelectOption>
-    ))}
-  </IonSelect>
-  <IonInput
-    type="number"
-    placeholder="Quantity"
-    value={quantity}
-    onIonChange={(e) => setQuantity(parseInt(e.detail.value!, 10))}
-    className="quantity-input"
-  />
-  <div className="buttons">
-    <IonButton onClick={addItemToShoppingList} color="success" className="action-button">
-      Add Item
-    </IonButton>
-    <IonButton routerLink="/NewItemPage" color="success" className="action-button">
-      +
-    </IonButton>
-  </div>
-</IonItem>
-
-
-  <IonList>
-    {shoppingList.map((item) => (
-      <IonItem key={item.id}>
-        <IonLabel
-          style={{
-            textDecoration: item.checked ? 'line-through' : 'none',
-          }}
-          onClick={() => toggleChecked(item.id, item.checked)}
-        >
-          {item.name}
-        </IonLabel>
-        <div className="item-controls">
-          <IonButton fill="clear" onClick={() => updateQuantity(item.id, -1)}>
-            <IonIcon icon={removeCircle} color="success" />
+      <IonHeader>
+        <IonToolbar color={'success'}>
+          <IonButton
+            onClick={() => history.goBack()}
+            fill="clear"
+            slot="start"
+            style={{ width: 'auto', height: 'auto' }}
+          >
+            <IonIcon color="dark" size="large" icon={arrowBackCircle} />
           </IonButton>
-          <IonLabel>{item.quantity}</IonLabel>
-          <IonButton fill="clear" onClick={() => updateQuantity(item.id, 1)}>
-            <IonIcon icon={addCircle} color="success" />
+          <IonTitle className="ion-text-center">SHOPVENTORY</IonTitle>
+          <IonButton
+            routerLink="/MainPage"
+            fill="clear"
+            slot="end"
+            style={{ width: 'auto', height: 'auto' }}
+          >
+            <IonIcon icon={basketOutline} color="dark" size="large" />
           </IonButton>
-        </div>
-        <IonIcon
-          icon={closeCircle}
-          color="dark"
-          slot="end"
-          onClick={() => deleteItem(item.id)}
-        />
-      </IonItem>
-    ))}
-  </IonList>
-</IonContent>
+        </IonToolbar>
+      </IonHeader>
 
+      <IonContent>
+        <IonTitle className="page-title">
+          <h1>{listName}</h1>
+        </IonTitle>
+
+        <IonItem>
+          <IonSelect
+            placeholder="Select Item"
+            value={selectedItem}
+            onIonChange={(e) => setSelectedItem(e.detail.value)}
+          >
+            {availableItems.map((item) => (
+              <IonSelectOption key={item.id} value={item.id}>
+                {item.name} ({item.category})
+              </IonSelectOption>
+            ))}
+          </IonSelect>
+          <IonInput
+            type="number"
+            placeholder="Quantity"
+            value={quantity}
+            onIonChange={(e) => setQuantity(parseInt(e.detail.value!, 10))}
+            className="quantity-input"
+          />
+          <IonButton onClick={addItemToShoppingList} color="success">
+            Add Item
+          </IonButton>
+          <IonButton routerLink="/NewItemPage" color="success">
+            +
+          </IonButton>
+        </IonItem>
+
+        <IonList>
+          {shoppingList.map((item) => (
+            <IonItem key={item.id}>
+              <IonLabel
+                style={{
+                  textDecoration: item.checked ? 'line-through' : 'none',
+                }}
+                onClick={() => toggleChecked(item.id, item.checked)}
+              >
+                {item.name}
+              </IonLabel>
+              <div className="item-controls">
+                <IonButton fill="clear" onClick={() => updateQuantity(item.id, -1)}>
+                  <IonIcon icon={removeCircle} color="success" />
+                </IonButton>
+                <IonLabel>{item.quantity}</IonLabel>
+                <IonButton fill="clear" onClick={() => updateQuantity(item.id, 1)}>
+                  <IonIcon icon={addCircle} color="success" />
+                </IonButton>
+              </div>
+              <IonIcon
+                icon={closeCircle}
+                color="dark"
+                slot="end"
+                onClick={() => deleteItem(item.id)}
+              />
+            </IonItem>
+          ))}
+        </IonList>
+      </IonContent>
     </IonPage>
   );
 };
