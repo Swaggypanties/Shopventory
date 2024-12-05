@@ -19,8 +19,6 @@ import { db } from '../firebaseConfig';
 import { collection, query, getDocs, deleteDoc, doc } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-
-
 const ListsPage: React.FC = () => {
   const history = useHistory();
   const [lists, setLists] = useState<any[]>([]);
@@ -89,42 +87,42 @@ const ListsPage: React.FC = () => {
     }
   };
 
-  const filteredLists = lists.filter((list) =>
-    list.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredLists = lists.filter((list) => {
+    const term = searchTerm.toLowerCase();
+    // Match list name or list type
+    return list.name.toLowerCase().includes(term) || list.type.toLowerCase().includes(term);
+  });
 
   return (
     <IonPage>
       <IonHeader>
-  <IonToolbar color={'success'}>
-    <IonButton
-      onClick={() => history.goBack()} // Go back to the previous page
-      fill="clear"
-      slot="start"
-      style={{ width: 'auto', height: 'auto' }}
-    >
-      <IonIcon color="dark" size="large" icon={arrowBackCircle} />
-    </IonButton>
-    <IonTitle className="ion-text-center">SHOPVENTORY</IonTitle>
-    <IonButton
-      routerLink="/MainPage"
-      fill="clear"
-      slot="end"
-      style={{ width: 'auto', height: 'auto' }}
-    >
-      <IonIcon icon={basketOutline} color="dark" size="large" />
-    </IonButton>
-  </IonToolbar>
-</IonHeader>
-
-
+        <IonToolbar color={'success'}>
+          <IonButton
+            onClick={() => history.goBack()} // Go back to the previous page
+            fill="clear"
+            slot="start"
+            style={{ width: 'auto', height: 'auto' }}
+          >
+            <IonIcon color="dark" size="large" icon={arrowBackCircle} />
+          </IonButton>
+          <IonTitle className="ion-text-center">SHOPVENTORY</IonTitle>
+          <IonButton
+            routerLink="/MainPage"
+            fill="clear"
+            slot="end"
+            style={{ width: 'auto', height: 'auto' }}
+          >
+            <IonIcon icon={basketOutline} color="dark" size="large" />
+          </IonButton>
+        </IonToolbar>
+      </IonHeader>
 
       <IonContent className="ion-text-center" fullscreen>
         <h1>Your Lists</h1>
         <IonSearchbar
           value={searchTerm}
           onIonInput={(e: any) => setSearchTerm(e.target.value)}
-          placeholder="Search lists..."
+          placeholder="Search lists by name or type"
         ></IonSearchbar>
 
         <IonList>
