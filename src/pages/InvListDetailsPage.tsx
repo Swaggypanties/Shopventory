@@ -11,6 +11,8 @@ import {
   IonLabel,
   IonSelect,
   IonSelectOption,
+  IonInput,
+  IonModal,
 } from '@ionic/react';
 import {
   arrowBackCircle,
@@ -18,12 +20,13 @@ import {
   closeCircle,
   addCircle,
   removeCircle,
+  informationCircle,
 } from 'ionicons/icons';
 import { useParams, useHistory } from 'react-router-dom';
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
 import { getAuth } from 'firebase/auth';
-import { collection, doc, setDoc, getDocs, getDoc } from 'firebase/firestore';
+import { collection, doc, setDoc, getDocs, getDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import './InvListDetailsPage.css';
 
 const InvListDetailsPage: React.FC = () => {
@@ -33,7 +36,9 @@ const InvListDetailsPage: React.FC = () => {
   const [inventoryList, setInventoryList] = useState<any[]>([]);
   const [availableItems, setAvailableItems] = useState<any[]>([]);
   const [selectedItem, setSelectedItem] = useState('');
+  const [quantity, setQuantity] = useState(1);
   const [listName, setListName] = useState('');
+  const [showInfoModal, setShowInfoModal] = useState(false); // Modal state
 
   useEffect(() => {
     async function fetchItems() {
@@ -111,115 +116,166 @@ const InvListDetailsPage: React.FC = () => {
     const newItemRef = doc(listItemsRef);
 
     try {
-      await setDoc(newItemRef, {
+      const newItem = {
         name: selectedItemData.name,
         category: selectedItemData.category,
-        quantity: 1,
+        quantity: quantity,
         createdAt: new Date(),
-      });
+      };
+      await setDoc(newItemRef, newItem);
 
-      setInventoryList((prevList) => [
-        ...prevList,
-        { id: newItemRef.id, ...selectedItemData, quantity: 1 },
-      ]);
+      setInventoryList((prevList) => [...prevList, { id: newItemRef.id, ...newItem }]);
       setSelectedItem('');
+      setQuantity(1);
     } catch (error) {
       console.error('Error adding item:', error);
     }
   };
 
-  const updateQuantity = (id: string, delta: number) => {
-    setInventoryList((prevList) =>
-      prevList.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(0, item.quantity + delta) }
-          : item
-      )
-    );
-    // Add logic to update quantity in Firestore
+  const updateQuantity = async (id: string, delta: number) => {
+    const user = getAuth().currentUser;
+    if (!user) return;
+
+    const itemRef = doc(db, `users/${user.uid}/lists/${listId}/items/${id}`);
+    const currentItem = inventoryList.find((item) => item.id === id);
+
+    if (!currentItem) return;
+
+    const newQuantity = Math.max(0, currentItem.quantity + delta);
+
+    try {
+      await updateDoc(itemRef, { quantity: newQuantity });
+      setInventoryList((prevList) =>
+        prevList.map((item) =>
+          item.id === id ? { ...item, quantity: newQuantity } : item
+        )
+      );
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+    }
   };
 
-  const deleteItem = (id: string) => {
-    setInventoryList((prevList) => prevList.filter((item) => item.id !== id));
-    // Add logic to delete from Firestore
+  const deleteItem = async (id: string) => {
+    const user = getAuth().currentUser;
+    if (!user) return;
+
+    const itemRef = doc(db, `users/${user.uid}/lists/${listId}/items/${id}`);
+
+    try {
+      await deleteDoc(itemRef);
+      setInventoryList((prevList) => prevList.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
   };
 
   return (
     <IonPage>
-            <IonHeader>
-  <IonToolbar color={'success'}>
-    <IonButton
-      onClick={() => history.goBack()} // Go back to the previous page
-      fill="clear"
-      slot="start"
-      style={{ width: 'auto', height: 'auto' }}
-    >
-      <IonIcon color="dark" size="large" icon={arrowBackCircle} />
-    </IonButton>
-    <IonTitle className="ion-text-center">SHOPVENTORY</IonTitle>
-    <IonButton
-      routerLink="/MainPage"
-      fill="clear"
-      slot="end"
-      style={{ width: 'auto', height: 'auto' }}
-    >
-      <IonIcon icon={basketOutline} color="dark" size="large" />
-    </IonButton>
-  </IonToolbar>
-</IonHeader>
-
-<IonContent>
-  <IonTitle className="page-title">
-    <h1>{listName}</h1>
-  </IonTitle>
-
-  <IonItem className="button-container">
-  <IonSelect
-    placeholder="Select Item"
-    value={selectedItem}
-    onIonChange={(e) => setSelectedItem(e.detail.value)}
-  >
-    {availableItems.map((item) => (
-      <IonSelectOption key={item.id} value={item.id}>
-        {item.name} ({item.category})
-      </IonSelectOption>
-    ))}
-  </IonSelect>
-  <div className="buttons">
-    <IonButton onClick={addItemToInventoryList} color="success" className="action-button">
-      Add Item
-    </IonButton>
-    <IonButton routerLink="/NewItemPage" color="success" className="action-button">
-      +
-    </IonButton>
-  </div>
-</IonItem>
-
-
-  <IonList>
-    {inventoryList.map((item) => (
-      <IonItem key={item.id}>
-        <IonLabel>{item.name}</IonLabel>
-        <div className="item-controls">
-          <IonButton fill="clear" onClick={() => updateQuantity(item.id, -1)}>
-            <IonIcon icon={removeCircle} color="success" />
+      <IonHeader>
+        <IonToolbar color={'success'}>
+          <IonButton
+            onClick={() => history.goBack()}
+            fill="clear"
+            slot="start"
+            style={{ width: 'auto', height: 'auto' }}
+          >
+            <IonIcon color="dark" size="large" icon={arrowBackCircle} />
           </IonButton>
-          <IonLabel>{item.quantity}</IonLabel>
-          <IonButton fill="clear" onClick={() => updateQuantity(item.id, 1)}>
-            <IonIcon icon={addCircle} color="success" />
+          <IonTitle className="ion-text-center">SHOPVENTORY</IonTitle>
+          <IonButton
+            routerLink="/MainPage"
+            fill="clear"
+            slot="end"
+            style={{ width: 'auto', height: 'auto' }}
+          >
+            <IonIcon icon={basketOutline} color="dark" size="large" />
           </IonButton>
-        </div>
-        <IonIcon
-          icon={closeCircle}
-          color="dark"
-          slot="end"
-          onClick={() => deleteItem(item.id)}
-        />
-      </IonItem>
-    ))}
-  </IonList>
-</IonContent>
+        </IonToolbar>
+      </IonHeader>
 
+      <IonContent>
+        <IonTitle className="page-title">
+          <h1>{listName}</h1>
+        </IonTitle>
+
+        <IonItem>
+          <IonSelect
+            placeholder="Select Item"
+            value={selectedItem}
+            onIonChange={(e) => setSelectedItem(e.detail.value)}
+          >
+            {availableItems.map((item) => (
+              <IonSelectOption key={item.id} value={item.id}>
+                {item.name} ({item.category})
+              </IonSelectOption>
+            ))}
+          </IonSelect>
+          <IonInput
+            type="number"
+            placeholder="Quantity"
+            value={quantity}
+            onIonChange={(e) => setQuantity(parseInt(e.detail.value!, 10))}
+          />
+          <IonButton onClick={addItemToInventoryList} color="success">
+            Add Item
+          </IonButton>
+          <IonButton routerLink="/NewItemPage" color="success">
+            +
+          </IonButton>
+        </IonItem>
+
+        <IonList>
+          {inventoryList.map((item) => (
+            <IonItem key={item.id}>
+              <IonLabel>{item.name}</IonLabel>
+              <div className="item-controls">
+                <IonButton fill="clear" onClick={() => updateQuantity(item.id, -1)}>
+                  <IonIcon icon={removeCircle} color="success" />
+                </IonButton>
+                <IonLabel>{item.quantity}</IonLabel>
+                <IonButton fill="clear" onClick={() => updateQuantity(item.id, 1)}>
+                  <IonIcon icon={addCircle} color="success" />
+                </IonButton>
+              </div>
+              <IonIcon
+                icon={closeCircle}
+                color="dark"
+                slot="end"
+                onClick={() => deleteItem(item.id)}
+              />
+            </IonItem>
+          ))}
+        </IonList>
+
+        {/* Info Button */}
+        <IonButton
+          fill="clear"
+          onClick={() => setShowInfoModal(true)}
+          style={{ marginTop: '1rem', marginBottom: '1rem' }}
+        >
+          <IonIcon icon={informationCircle} color="success" size="large" />
+        </IonButton>
+
+        {/* Info Modal */}
+        <IonModal isOpen={showInfoModal} onDidDismiss={() => setShowInfoModal(false)}>
+          <IonHeader>
+            <IonToolbar color={'success'}>
+              <IonTitle>Inventory List Info</IonTitle>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent>
+            <IonList>
+              <IonItem>Add items: Select from the dropdown, enter quantity, and press "Add Item."</IonItem>
+              <IonItem>If the desired item is not in the dropdown, press the "+" button to create a new item.</IonItem>
+              <IonItem>Adjust quantities: Use "+" or "-" buttons.</IonItem>
+              <IonItem>Delete items: Press the trash icon.</IonItem>
+            </IonList>
+            <IonButton color={'success'} expand="block" onClick={() => setShowInfoModal(false)}>
+              Close
+            </IonButton>
+          </IonContent>
+        </IonModal>
+      </IonContent>
     </IonPage>
   );
 };
