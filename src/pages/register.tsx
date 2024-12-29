@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom'; // Import useHistory
 import { toast } from '../toast';
 import { registerUser } from '../firebaseConfig';
-import './register.css';
 
 const Register: React.FC = () => {
     const [username, setUsername] = useState('');
