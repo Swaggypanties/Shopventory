@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom'; // Import useHistory
 import { toast } from '../toast';
 import { registerUser } from '../firebaseConfig';
+import './register.css';
 
 const Register: React.FC = () => {
     const [username, setUsername] = useState('');
@@ -58,7 +59,7 @@ const Register: React.FC = () => {
                 <IonInput placeholder="Username" onIonChange={(e: any) => setUsername(e.target.value)} />
                 <IonInput
                     type="password"
-                    placeholder="Password"
+                    placeholder="Password min 6. characters"
                     onIonChange={(e: any) => setPassword(e.target.value)}
                 />
                 <IonInput
